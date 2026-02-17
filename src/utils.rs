@@ -3,6 +3,8 @@ use std::{
     path::Path,
 };
 
+use crossterm::event::KeyCode;
+
 use crate::errors::AppError;
 
 // returns a vector of DirEntry, or an AppError on fail. Will not error out if a dir can't be read
@@ -34,4 +36,30 @@ pub fn format_size(dir: &DirEntry) -> String {
     } else {
         String::from("----")
     }
+}
+
+pub fn parse_keybind(keys: &str) -> Vec<KeyCode> {
+    let parts = keys.split("|");
+    let mut keybind = Vec::new();
+    for part in parts {
+        match part.to_uppercase().trim() {
+            "BACKSPACE" => keybind.push(KeyCode::Backspace),
+            "ENTER" => keybind.push(KeyCode::Enter),
+            "LEFT" => keybind.push(KeyCode::Left),
+            "RIGHT" => keybind.push(KeyCode::Right),
+            "UP" => keybind.push(KeyCode::Up),
+            "DOWN" => keybind.push(KeyCode::Down),
+            "ESC" => keybind.push(KeyCode::Esc),
+            "TAB" => keybind.push(KeyCode::Tab),
+            _ => {
+                if part.len() == 1 {
+                    let chars: Vec<char> = part.chars().collect();
+                    keybind.push(KeyCode::Char(chars[0]));
+                } else {
+                    keybind.push(KeyCode::Null);
+                }
+            }
+        }
+    }
+    return keybind;
 }

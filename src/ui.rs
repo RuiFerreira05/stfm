@@ -2,8 +2,9 @@ use std::fs::DirEntry;
 
 use ratatui::{
     Frame,
-    layout::{Constraint, Rect},
-    style::Style,
+    layout::Constraint,
+    style::{Style, Stylize},
+    text::Line,
     widgets::{Block, Row, Table},
 };
 
@@ -38,19 +39,28 @@ pub fn render(app: &mut App, frame: &mut Frame) {
             let widths = [Constraint::Fill(1), Constraint::Length(40)];
 
             // TABLE STYLING
+            let title_str = String::from(
+                " ".to_string()
+                    + app
+                        .root_dir
+                        .to_str()
+                        .unwrap_or("")
+                        .replace("\\", "/")
+                        .as_str(),
+            ) + "/ ";
+            let title = Line::from(title_str).italic().fg(styles::mocha::SUBTEXT_0);
             let main_table = Table::new(rows, widths)
-                .block(Block::bordered().border_style(Style::new().fg(styles::mocha::LAVENDER)))
+                .block(
+                    Block::bordered()
+                        .border_style(Style::new().fg(styles::mocha::LAVENDER))
+                        .title(title),
+                )
                 .style(Style::new().bg(styles::mocha::BASE).fg(styles::mocha::TEXT))
                 .highlight_symbol(" -> ")
                 .highlight_spacing(ratatui::widgets::HighlightSpacing::Always)
                 .row_highlight_style(Style::new().italic().bold());
 
-            // PREVENT BLOCK FROM FILLING THE WHOLE SCREEN
-            let area = frame.area();
-            let content_height = (app.dir_items.len() as u16 + 2).min(area.height);
-            let table_area = Rect::new(area.x, area.y, area.width, content_height);
-
-            frame.render_stateful_widget(main_table, table_area, &mut app.dir_table_state);
+            frame.render_stateful_widget(main_table, frame.area(), &mut app.dir_table_state);
         }
     }
 }

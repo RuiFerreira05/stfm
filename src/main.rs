@@ -21,5 +21,7 @@ fn main() -> Result<(), AppError> {
     // Running update loop
     ratatui::run(|terminal| app.run(terminal)).expect("Oops, something went wrong");
 
+    println!("------------------\n{:?}\n-------------------", app.logger);
+    print!("{}", app.output);
     Ok(())
 }

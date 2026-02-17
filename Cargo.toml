@@ -7,6 +7,7 @@ default-run = "stfm"
 [dependencies]
 crossterm = "0.29.0"
 ratatui = { version = "0.30.0", features = ["serde"] }
+strum = { version = "0.27.2", features = ["derive"] }
 
 [[bin]]
 name = "probing"
