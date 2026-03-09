@@ -5,8 +5,9 @@ use ratatui::{DefaultTerminal, widgets::TableState};
 
 use crate::{
     errors::AppError,
-    interaction::{input, keybinds::KeybindsNormal},
+    interaction::{InteractState, input, keybinds::KeybindsNormal},
     logger::Logger,
+    screens::Screens,
     ui, utils,
 };
 
@@ -74,16 +75,4 @@ impl App {
 
         self.dir_table_state.select_first();
     }
-}
-
-#[derive(Debug, Default)]
-pub enum Screens {
-    #[default]
-    MainScreen,
-}
-
-#[derive(Debug, Default)]
-pub enum InteractState {
-    #[default]
-    Normal,
 }
