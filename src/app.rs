@@ -4,7 +4,7 @@ use crossterm::event::{self, Event};
 use ratatui::DefaultTerminal;
 
 use crate::{
-    dir::Dir,
+    dir::Navigator,
     errors::AppError,
     interaction::{Input, input},
     logger::Logger,
@@ -15,7 +15,7 @@ use crate::{
 #[derive(Debug, Default)]
 pub struct App {
     pub ui: UI,
-    pub dir: Dir,
+    pub navigator: Navigator,
     pub input: Input,
     pub logger: Logger,
     pub output: String,
@@ -26,7 +26,7 @@ impl App {
     pub fn new(path: PathBuf) -> Result<App, AppError> {
         if path.exists() {
             let app = App {
-                dir: Dir::new(path)?,
+                navigator: Navigator::new(path)?,
                 ..Default::default()
             };
             Ok(app)
@@ -38,9 +38,9 @@ impl App {
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> Result<(), AppError> {
         while !self.exit {
             // Find new items
-            if self.dir.items_changed {
-                self.dir.dir_items = utils::get_dir_content(&self.dir.root_dir)?;
-                self.dir.items_changed = false;
+            if self.navigator.items_changed {
+                self.navigator.dir_items = utils::get_dir_content(&self.navigator.root_dir)?;
+                self.navigator.items_changed = false;
             }
 
             // Draw the terminal
@@ -58,10 +58,10 @@ impl App {
 
     pub fn change_root(&mut self, dir: PathBuf, add_to_history: bool) {
         if add_to_history {
-            self.dir.history.push(self.dir.root_dir.clone());
+            self.navigator.history.push(self.navigator.root_dir.clone());
         }
-        self.dir.root_dir = dir;
-        self.dir.items_changed = true;
+        self.navigator.root_dir = dir;
+        self.navigator.items_changed = true;
 
         self.ui.dir_table_state.select_first();
     }

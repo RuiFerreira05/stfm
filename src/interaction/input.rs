@@ -34,7 +34,7 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
                     // strict equality is fine for NONE, or use key.modifiers.is_empty()
                     else {
                         if let Some(item_index) = app.ui.dir_table_state.selected() {
-                            let item = &app.dir.dir_items[item_index];
+                            let item = &app.navigator.dir_items[item_index];
                             if let Ok(item_type) = item.file_type() {
                                 match item_type {
                                     _ if item_type.is_dir() => {
@@ -54,7 +54,7 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
             //BACK DIR
             code if app.input.keybinds_normal.back_dir.contains(&code) => {
                 if key.is_press() {
-                    if let Some(dir) = app.dir.root_dir.parent() {
+                    if let Some(dir) = app.navigator.root_dir.parent() {
                         app.change_root(dir.to_path_buf(), true);
                     }
                 }
@@ -63,7 +63,7 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
             //BACK HISTORY
             code if app.input.keybinds_normal.back_history.contains(&code) => {
                 if key.is_press() {
-                    if let Some(previous_entry) = app.dir.history.pop() {
+                    if let Some(previous_entry) = app.navigator.history.pop() {
                         app.change_root(previous_entry, false);
                     } else {
                         app.exit = true;
@@ -77,7 +77,7 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
 }
 
 fn output_dir(app: &mut App) {
-    app.output = app.dir.root_dir.to_str().unwrap_or("").to_string();
+    app.output = app.navigator.root_dir.to_str().unwrap_or("").to_string();
     app.exit = true;
 }
 
