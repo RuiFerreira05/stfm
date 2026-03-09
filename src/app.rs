@@ -1,7 +1,7 @@
-use std::{fs::DirEntry, path::PathBuf};
+use std::path::PathBuf;
 
 use crossterm::event::{self, Event};
-use ratatui::{DefaultTerminal, widgets::TableState};
+use ratatui::DefaultTerminal;
 
 use crate::{
     dir::Dir,
@@ -16,12 +16,8 @@ use crate::{
 pub struct App {
     pub ui: UI,
     pub dir: Dir,
-    pub root_dir: PathBuf,
-    pub history: Vec<PathBuf>,
-    pub dir_items: Vec<DirEntry>,
     pub interact_state: InteractState,
     pub keybinds_normal: KeybindsNormal,
-    pub items_changed: bool,
     pub logger: Logger,
     pub output: String,
     pub exit: bool,
@@ -30,10 +26,8 @@ pub struct App {
 impl App {
     pub fn new(path: PathBuf) -> Result<App, AppError> {
         if path.exists() {
-            let items = utils::get_dir_content(&path).unwrap_or_default();
             let app = App {
-                root_dir: path,
-                dir_items: items,
+                dir: Dir::new(path)?,
                 ..Default::default()
             };
             Ok(app)
@@ -45,9 +39,9 @@ impl App {
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> Result<(), AppError> {
         while !self.exit {
             // Find new items
-            if self.items_changed {
-                self.dir_items = utils::get_dir_content(&self.root_dir)?;
-                self.items_changed = false;
+            if self.dir.items_changed {
+                self.dir.dir_items = utils::get_dir_content(&self.dir.root_dir)?;
+                self.dir.items_changed = false;
             }
 
             // Draw the terminal
@@ -65,10 +59,10 @@ impl App {
 
     pub fn change_root(&mut self, dir: PathBuf, add_to_history: bool) {
         if add_to_history {
-            self.history.push(self.root_dir.clone());
+            self.dir.history.push(self.dir.root_dir.clone());
         }
-        self.root_dir = dir;
-        self.items_changed = true;
+        self.dir.root_dir = dir;
+        self.dir.items_changed = true;
 
         self.ui.dir_table_state.select_first();
     }

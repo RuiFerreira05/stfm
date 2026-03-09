@@ -12,6 +12,7 @@ use crate::{app::App, styles, utils};
 
 pub fn render(app: &mut App, frame: &mut Frame) {
     let rows: Vec<Row> = app
+        .dir
         .dir_items
         .iter()
         .enumerate()
@@ -24,6 +25,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
     let title_str = String::from(
         " ".to_string()
             + app
+                .dir
                 .root_dir
                 .to_str()
                 .unwrap_or("")
