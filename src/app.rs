@@ -4,6 +4,7 @@ use crossterm::event::{self, Event};
 use ratatui::{DefaultTerminal, widgets::TableState};
 
 use crate::{
+    dir::Dir,
     errors::AppError,
     interaction::{InteractState, input, keybinds::KeybindsNormal},
     logger::Logger,
@@ -14,6 +15,7 @@ use crate::{
 #[derive(Debug, Default)]
 pub struct App {
     pub ui: UI,
+    pub dir: Dir,
     pub root_dir: PathBuf,
     pub history: Vec<PathBuf>,
     pub dir_items: Vec<DirEntry>,
@@ -31,7 +33,6 @@ impl App {
             let items = utils::get_dir_content(&path).unwrap_or_default();
             let app = App {
                 root_dir: path,
-                history: Vec::new(),
                 dir_items: items,
                 ..Default::default()
             };
