@@ -42,7 +42,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         .highlight_spacing(ratatui::widgets::HighlightSpacing::Always)
         .row_highlight_style(Style::new().italic().bold());
 
-    frame.render_stateful_widget(main_table, frame.area(), &mut app.dir_table_state);
+    frame.render_stateful_widget(main_table, frame.area(), &mut app.ui.dir_table_state);
 }
 
 fn style_dir(i: usize, dir: &DirEntry) -> Row<'_> {

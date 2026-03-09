@@ -7,20 +7,19 @@ use crate::{
     errors::AppError,
     interaction::{InteractState, input, keybinds::KeybindsNormal},
     logger::Logger,
-    screens::Screens,
-    ui, utils,
+    ui::{self, UI},
+    utils,
 };
 
 #[derive(Debug, Default)]
 pub struct App {
-    pub current_screen: Screens,
+    pub ui: UI,
     pub root_dir: PathBuf,
     pub history: Vec<PathBuf>,
-    pub dir_table_state: TableState,
     pub dir_items: Vec<DirEntry>,
     pub interact_state: InteractState,
-    pub items_changed: bool,
     pub keybinds_normal: KeybindsNormal,
+    pub items_changed: bool,
     pub logger: Logger,
     pub output: String,
     pub exit: bool,
@@ -30,12 +29,9 @@ impl App {
     pub fn new(path: PathBuf) -> Result<App, AppError> {
         if path.exists() {
             let items = utils::get_dir_content(&path).unwrap_or_default();
-            let mut table_state = TableState::new();
-            table_state.select(Some(0));
             let app = App {
                 root_dir: path,
                 history: Vec::new(),
-                dir_table_state: table_state,
                 dir_items: items,
                 ..Default::default()
             };
@@ -73,6 +69,6 @@ impl App {
         self.root_dir = dir;
         self.items_changed = true;
 
-        self.dir_table_state.select_first();
+        self.ui.dir_table_state.select_first();
     }
 }

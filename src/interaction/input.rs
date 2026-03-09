@@ -12,14 +12,14 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
             //NAVIGATE UP
             code if app.keybinds_normal.navigate_up.contains(&code) => {
                 if key.is_press() {
-                    app.dir_table_state.select_previous();
+                    app.ui.dir_table_state.select_previous();
                 }
             }
 
             //NAVIGATE DOWN
             code if app.keybinds_normal.navigate_down.contains(&code) => {
                 if key.is_press() {
-                    app.dir_table_state.select_next();
+                    app.ui.dir_table_state.select_next();
                 }
             }
 
@@ -33,7 +33,7 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
                     // 2. Check for NONE (or handle else for default behavior)
                     // strict equality is fine for NONE, or use key.modifiers.is_empty()
                     else {
-                        if let Some(item_index) = app.dir_table_state.selected() {
+                        if let Some(item_index) = app.ui.dir_table_state.selected() {
                             let item = &app.dir_items[item_index];
                             if let Ok(item_type) = item.file_type() {
                                 match item_type {

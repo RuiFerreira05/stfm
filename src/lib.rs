@@ -1,4 +1,5 @@
 pub mod app;
+pub mod dir;
 pub mod errors;
 pub mod interaction;
 pub mod logger;
