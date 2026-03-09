@@ -6,7 +6,7 @@ use ratatui::DefaultTerminal;
 use crate::{
     dir::Dir,
     errors::AppError,
-    interaction::{InteractState, input, keybinds::KeybindsNormal},
+    interaction::{Input, input},
     logger::Logger,
     ui::{self, UI},
     utils,
@@ -16,8 +16,7 @@ use crate::{
 pub struct App {
     pub ui: UI,
     pub dir: Dir,
-    pub interact_state: InteractState,
-    pub keybinds_normal: KeybindsNormal,
+    pub input: Input,
     pub logger: Logger,
     pub output: String,
     pub exit: bool,

@@ -1,3 +1,5 @@
+use crate::interaction::keybinds::KeybindsNormal;
+
 pub mod input;
 pub mod keybinds;
 
@@ -5,4 +7,10 @@ pub mod keybinds;
 pub enum InteractState {
     #[default]
     Normal,
+}
+
+#[derive(Debug, Default)]
+pub struct Input {
+    pub interact_state: InteractState,
+    pub keybinds_normal: KeybindsNormal,
 }
