@@ -8,6 +8,7 @@ pub struct KeybindsNormal {
     pub back_history: Vec<KeyCode>,
     pub navigate_up: Vec<KeyCode>,
     pub navigate_down: Vec<KeyCode>,
+    pub toggle_log: Vec<KeyCode>,
 }
 
 impl Default for KeybindsNormal {
@@ -19,6 +20,7 @@ impl Default for KeybindsNormal {
             back_history: parse_keybind("BACKSPACE|ESC"),
             navigate_up: parse_keybind("UP"),
             navigate_down: parse_keybind("DOWN"),
+            toggle_log: parse_keybind("l"),
         }
     }
 }

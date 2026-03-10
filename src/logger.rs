@@ -7,7 +7,7 @@ pub struct Logger {
     pub logs: Vec<LogMessage>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct LogMessage {
     pub log_level: LogLevel,
     pub timestamp: SystemTime,

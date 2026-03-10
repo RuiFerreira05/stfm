@@ -8,6 +8,7 @@ use crate::{
     interaction::{Input, input},
     logger::Logger,
     navigator::Navigator,
+    screens::Screens,
     ui::{self, UI},
 };
 
@@ -31,6 +32,13 @@ impl App {
             Ok(app)
         } else {
             Err(AppError::GhostPath)
+        }
+    }
+
+    pub fn toggle_logs(&mut self) {
+        match self.ui.current_screen {
+            Screens::MainScreen => self.ui.current_screen = Screens::LogScreen,
+            Screens::LogScreen => self.ui.current_screen = Screens::MainScreen,
         }
     }
 

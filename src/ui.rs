@@ -1,4 +1,7 @@
-use ratatui::{Frame, widgets::TableState};
+use ratatui::{
+    Frame,
+    widgets::{ListState, TableState},
+};
 
 use crate::{
     app::App,
@@ -18,16 +21,20 @@ pub struct UI {
     pub current_screen: Screens,
     pub error_message: String,
     pub dir_table_state: TableState,
+    pub log_list_state: TableState,
 }
 
 impl Default for UI {
     fn default() -> Self {
         let mut table_state = TableState::new();
-        table_state.select(Some(0));
+        table_state.select_first();
+        let mut log_state = TableState::new();
+        log_state.select_last();
         Self {
             current_screen: Default::default(),
             error_message: Default::default(),
             dir_table_state: table_state,
+            log_list_state: log_state,
         }
     }
 }

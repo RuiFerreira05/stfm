@@ -69,6 +69,12 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
                 }
             }
 
+            code if app.input.keybinds_normal.toggle_log.contains(&code) => {
+                if key.is_press() {
+                    app.toggle_logs();
+                }
+            }
+
             _ => {}
         },
     }
