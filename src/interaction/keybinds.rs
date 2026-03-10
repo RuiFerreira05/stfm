@@ -1,7 +1,5 @@
 use crossterm::event::KeyCode;
 
-use crate::utils;
-
 #[derive(Debug)]
 pub struct KeybindsNormal {
     pub exit: Vec<KeyCode>,
@@ -15,12 +13,12 @@ pub struct KeybindsNormal {
 impl Default for KeybindsNormal {
     fn default() -> Self {
         Self {
-            exit: utils::parse_keybind("q"),
-            select: utils::parse_keybind("RIGHT|ENTER"),
-            back_dir: utils::parse_keybind("LEFT"),
-            back_history: utils::parse_keybind("BACKSPACE|ESC"),
-            navigate_up: utils::parse_keybind("UP"),
-            navigate_down: utils::parse_keybind("DOWN"),
+            exit: parse_keybind("q"),
+            select: parse_keybind("RIGHT|ENTER"),
+            back_dir: parse_keybind("LEFT"),
+            back_history: parse_keybind("BACKSPACE|ESC"),
+            navigate_up: parse_keybind("UP"),
+            navigate_down: parse_keybind("DOWN"),
         }
     }
 }
@@ -29,4 +27,30 @@ impl KeybindsNormal {
     pub fn new() -> KeybindsNormal {
         KeybindsNormal::default()
     }
+}
+
+pub fn parse_keybind(keys: &str) -> Vec<KeyCode> {
+    let parts = keys.split("|");
+    let mut keybind = Vec::new();
+    for part in parts {
+        match part.to_uppercase().trim() {
+            "BACKSPACE" => keybind.push(KeyCode::Backspace),
+            "ENTER" => keybind.push(KeyCode::Enter),
+            "LEFT" => keybind.push(KeyCode::Left),
+            "RIGHT" => keybind.push(KeyCode::Right),
+            "UP" => keybind.push(KeyCode::Up),
+            "DOWN" => keybind.push(KeyCode::Down),
+            "ESC" => keybind.push(KeyCode::Esc),
+            "TAB" => keybind.push(KeyCode::Tab),
+            _ => {
+                if part.len() == 1 {
+                    let chars: Vec<char> = part.chars().collect();
+                    keybind.push(KeyCode::Char(chars[0]));
+                } else {
+                    keybind.push(KeyCode::Null);
+                }
+            }
+        }
+    }
+    return keybind;
 }

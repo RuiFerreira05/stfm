@@ -6,4 +6,3 @@ pub mod navigator;
 pub mod screens;
 pub mod styles;
 pub mod ui;
-pub mod utils;

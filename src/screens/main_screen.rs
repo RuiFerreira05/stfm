@@ -8,7 +8,7 @@ use ratatui::{
     widgets::{Block, Row, Table},
 };
 
-use crate::{app::App, styles, utils};
+use crate::{app::App, styles};
 
 pub fn render(app: &mut App, frame: &mut Frame) {
     let rows: Vec<Row> = app
@@ -50,7 +50,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
 
 fn style_dir(i: usize, dir: &DirEntry) -> Row<'_> {
     let name = dir.file_name().into_string().unwrap();
-    let size_fmt = utils::format_size(dir);
+    let size_fmt = format_size(dir);
 
     let mut style = if let Ok(file_type) = dir.file_type() {
         if file_type.is_dir() {
@@ -67,4 +67,21 @@ fn style_dir(i: usize, dir: &DirEntry) -> Row<'_> {
     }
 
     Row::new(vec![name, size_fmt]).style(style)
+}
+
+pub fn format_size(dir: &DirEntry) -> String {
+    if let Ok(metadata) = dir.metadata() {
+        let mut size = metadata.len();
+        let mut size_fmt = String::from("----");
+        for unit in ["B", "KB", "MB", "GB", "TB"] {
+            if size < 1024 {
+                size_fmt = size.to_string() + unit;
+                break;
+            }
+            size /= 1024;
+        }
+        return size_fmt;
+    } else {
+        String::from("----")
+    }
 }
