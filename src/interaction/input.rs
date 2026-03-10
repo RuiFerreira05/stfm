@@ -1,139 +1,87 @@
-use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use crate::app::App;
 
-use crate::{app::App, interaction::InteractState};
+use super::action::Action;
 
-pub fn handle_interaction(key: KeyEvent, app: &mut App) {
-    match app.input.interact_state {
-        InteractState::Normal => match key.code {
-            //EXIT
-            KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => {
-                app.logger.log_info("Exit triggered via Ctrl+C");
-                app.exit = true;
-            }
-            code if app.input.keybinds_normal.exit.contains(&code) => {
-                app.logger.log_info("Exit triggered via quit keybind");
-                app.exit = true;
+impl App {
+    /// Execute an action that was resolved from the keymap.
+    /// This is pure application logic — no keybind awareness needed.
+    pub fn execute(&mut self, action: &Action) {
+        match action {
+            Action::Exit => {
+                self.logger.log_info("Exit triggered");
+                self.exit = true;
             }
 
-            //NAVIGATE UP
-            code if app.input.keybinds_normal.navigate_up.contains(&code) => {
-                if key.is_press() {
-                    app.logger.log_info("Navigate up");
-                    app.ui.dir_table_state.select_previous();
-                }
+            Action::NavigateUp => {
+                self.logger.log_info("Navigate up");
+                self.ui.dir_table_state.select_previous();
             }
 
-            //NAVIGATE DOWN
-            code if app.input.keybinds_normal.navigate_down.contains(&code) => {
-                if key.is_press() {
-                    app.logger.log_info("Navigate down");
-                    app.ui.dir_table_state.select_next();
-                }
+            Action::NavigateDown => {
+                self.logger.log_info("Navigate down");
+                self.ui.dir_table_state.select_next();
             }
 
-            //SELECT
-            code if app.input.keybinds_normal.select.contains(&code) => {
-                if key.is_press() {
-                    // 1. Check for CONTROL using .contains() (Robust)
-                    if key.modifiers.contains(KeyModifiers::CONTROL) {
-                        app.logger
-                            .log_info("Ctrl+Select: outputting current directory");
-                        output_dir(app);
-                    }
-                    // 2. Check for NONE (or handle else for default behavior)
-                    // strict equality is fine for NONE, or use key.modifiers.is_empty()
-                    else if let Some(item_index) = app.ui.dir_table_state.selected() {
-                        let item = &app.navigator.dir_items[item_index];
-                        if let Ok(item_type) = item.file_type() {
-                            match item_type {
-                                _ if item_type.is_dir() => {
-                                    let path = item.path();
-                                    app.logger.log_info(
-                                        format!("Selected directory: {}", path.display()).as_str(),
-                                    );
-                                    app.traverse(path, true);
-                                }
-                                _ if item_type.is_file() => {
-                                    app.logger.log_info(
-                                        format!("Selected file: {}", item.path().display())
-                                            .as_str(),
-                                    );
-                                    todo!("Handle interaction with files")
-                                }
-                                _ => {}
-                            }
+            Action::Select => {
+                if let Some(item_index) = self.ui.dir_table_state.selected() {
+                    let item = &self.navigator.dir_items[item_index];
+                    if let Ok(item_type) = item.file_type() {
+                        if item_type.is_dir() {
+                            let path = item.path();
+                            self.logger.log_info(
+                                format!("Selected directory: {}", path.display()).as_str(),
+                            );
+                            self.traverse(path, true);
+                        } else if item_type.is_file() {
+                            self.logger.log_info(
+                                format!("Selected file: {}", item.path().display()).as_str(),
+                            );
+                            todo!("Handle interaction with files");
                         }
-                    };
-                }
-            }
-
-            //BACK DIR
-            code if app.input.keybinds_normal.back_dir.contains(&code) => {
-                if key.is_press() {
-                    if let Some(dir) = app.navigator.root_dir.parent() {
-                        app.logger.log_info(
-                            format!("Back dir: navigating to parent {}", dir.display()).as_str(),
-                        );
-                        app.traverse(dir.to_path_buf(), true);
                     }
                 }
             }
 
-            //BACK HISTORY
-            code if app.input.keybinds_normal.back_history.contains(&code) => {
-                if key.is_press() {
-                    if let Some(previous_entry) = app.navigator.history.pop() {
-                        app.logger.log_info(
-                            format!("Back history: returning to {}", previous_entry.display())
-                                .as_str(),
-                        );
-                        app.traverse(previous_entry, false);
-                    } else {
-                        app.logger
-                            .log_info("Back history: no history left, exiting");
-                        app.exit = true;
-                    }
+            Action::CtrlSelect => {
+                self.logger
+                    .log_info("Ctrl+Select: outputting current directory");
+                let output = self.navigator.root_dir.to_str().unwrap_or("").to_string();
+                self.logger
+                    .log_info(format!("Outputting directory: {}", output).as_str());
+                self.output = output;
+                self.exit = true;
+            }
+
+            Action::BackDir => {
+                if let Some(dir) = self.navigator.root_dir.parent() {
+                    self.logger.log_info(
+                        format!("Back dir: navigating to parent {}", dir.display()).as_str(),
+                    );
+                    self.traverse(dir.to_path_buf(), true);
                 }
             }
 
-            // TOGGLE LOG SCREEN
-            code if app.input.keybinds_normal.toggle_log.contains(&code) => {
-                if key.is_press() {
-                    app.logger.log_info("Toggle log screen");
-                    app.toggle_logs();
+            Action::BackHistory => {
+                if let Some(previous_entry) = self.navigator.history.pop() {
+                    self.logger.log_info(
+                        format!("Back history: returning to {}", previous_entry.display()).as_str(),
+                    );
+                    self.traverse(previous_entry, false);
+                } else {
+                    self.logger
+                        .log_info("Back history: no history left, exiting");
+                    self.exit = true;
                 }
             }
 
-            _ => {}
-        },
-
-        InteractState::Log => match key.code {
-            // TOGGLE SCROLL
-            code if app.input.keybinds_log.toggle_scroll.contains(&code) => {
-                if key.is_press() {
-                    app.logger.log_error("Toggle scroll - TODO");
-                }
+            Action::ToggleLogs => {
+                self.logger.log_info("Toggle log screen");
+                self.toggle_logs();
             }
 
-            // TOGGLE LOG SCREEN
-            code if app.input.keybinds_log.toggle_log.contains(&code) => {
-                if key.is_press() {
-                    app.logger.log_info("Toggle log screen");
-                    app.toggle_logs();
-                }
+            Action::ToggleScroll => {
+                self.logger.log_error("Toggle scroll - TODO");
             }
-
-            _ => {}
-        },
+        }
     }
 }
-
-fn output_dir(app: &mut App) {
-    let output = app.navigator.root_dir.to_str().unwrap_or("").to_string();
-    app.logger
-        .log_info(format!("Outputting directory: {}", output).as_str());
-    app.output = output;
-    app.exit = true;
-}
-
-//TODO: #[cfg(target_os = "windows")] for explorer opening on windows

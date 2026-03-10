@@ -5,21 +5,34 @@ use ratatui::DefaultTerminal;
 
 use crate::{
     errors::AppError,
-    interaction::{Input, InteractState, input},
+    interaction::Keymap,
     logger::Logger,
     navigator::Navigator,
     screens::Screens,
     ui::{self, UI},
 };
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct App {
     pub ui: UI,
     pub navigator: Navigator,
-    pub input: Input,
+    pub keymap: Keymap,
     pub logger: Logger,
     pub output: String,
     pub exit: bool,
+}
+
+impl Default for App {
+    fn default() -> Self {
+        Self {
+            ui: UI::default(),
+            navigator: Navigator::default(),
+            keymap: Keymap::default(),
+            logger: Logger::default(),
+            output: String::new(),
+            exit: false,
+        }
+    }
 }
 
 impl App {
@@ -43,13 +56,11 @@ impl App {
                 self.logger
                     .log_info("Toggling screen: MainScreen -> LogScreen");
                 self.ui.current_screen = Screens::LogScreen;
-                self.input.interact_state = InteractState::Log;
             }
             Screens::LogScreen => {
                 self.logger
                     .log_info("Toggling screen: LogScreen -> MainScreen");
                 self.ui.current_screen = Screens::MainScreen;
-                self.input.interact_state = InteractState::Normal;
             }
         }
     }
@@ -89,9 +100,14 @@ impl App {
                 .draw(|frame| ui::render(self, frame))
                 .expect("Terminal failed to render");
 
-            //Handle user Interaction
+            // Handle user interaction
             if let Event::Key(key) = event::read().map_err(AppError::ReadEventErr)? {
-                input::handle_interaction(key, self);
+                if key.is_press() {
+                    if let Some(action) = self.keymap.resolve(&self.ui.current_screen, &key) {
+                        let action = *action;
+                        self.execute(&action);
+                    }
+                }
             }
         }
         self.logger.log_info("App exiting");
