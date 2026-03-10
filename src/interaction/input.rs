@@ -38,7 +38,7 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
                             if let Ok(item_type) = item.file_type() {
                                 match item_type {
                                     _ if item_type.is_dir() => {
-                                        app.change_root(item.path(), true);
+                                        app.traverse(item.path(), true);
                                     }
                                     _ if item_type.is_file() => {
                                         todo!("Handle interaction with files")
@@ -55,7 +55,7 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
             code if app.input.keybinds_normal.back_dir.contains(&code) => {
                 if key.is_press() {
                     if let Some(dir) = app.navigator.root_dir.parent() {
-                        app.change_root(dir.to_path_buf(), true);
+                        app.traverse(dir.to_path_buf(), true);
                     }
                 }
             }
@@ -64,7 +64,7 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
             code if app.input.keybinds_normal.back_history.contains(&code) => {
                 if key.is_press() {
                     if let Some(previous_entry) = app.navigator.history.pop() {
-                        app.change_root(previous_entry, false);
+                        app.traverse(previous_entry, false);
                     } else {
                         app.exit = true;
                     }

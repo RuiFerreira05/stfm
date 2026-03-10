@@ -1,6 +1,8 @@
 use std::io::Error;
 
-#[derive(Debug)]
+use strum::Display;
+
+#[derive(Debug, Display)]
 pub enum AppError {
     GenericAppError(Error),
     DirReadError(Error),

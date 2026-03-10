@@ -37,7 +37,8 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         .block(
             Block::bordered()
                 .border_style(Style::new().fg(styles::mocha::LAVENDER))
-                .title(title),
+                .title(title)
+                .title_bottom(Line::from(app.ui.error_message.as_str()).style(styles::mocha::RED)),
         )
         .style(Style::new().bg(styles::mocha::BASE).fg(styles::mocha::TEXT))
         .highlight_symbol(" -> ")

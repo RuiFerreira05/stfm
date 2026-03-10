@@ -19,7 +19,12 @@ fn main() -> Result<(), AppError> {
     let mut app = App::new(path)?;
 
     // Running update loop
-    ratatui::run(|terminal| app.run(terminal)).expect("Oops, something went wrong");
+    if let Err(e) = ratatui::run(|terminal| app.run(terminal)) {
+        println!(
+            "The app seems to have crashed with the following error: {}",
+            e
+        )
+    }
 
     println!("------------------\n{:?}\n-------------------", app.logger);
     print!("{}", app.output);

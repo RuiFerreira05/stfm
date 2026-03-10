@@ -13,7 +13,7 @@ pub struct Navigator {
 impl Navigator {
     pub fn new(path: PathBuf) -> Result<Navigator, AppError> {
         if path.exists() {
-            let items = utils::get_dir_content(&path).unwrap_or_default();
+            let items = utils::get_dir_content(&path)?;
             let dir = Navigator {
                 root_dir: path,
                 dir_items: items,
@@ -23,5 +23,15 @@ impl Navigator {
         } else {
             Err(AppError::GhostPath)
         }
+    }
+
+    pub fn change_root(&mut self, dir: PathBuf, add_to_history: bool) -> Result<(), AppError> {
+        self.dir_items = utils::get_dir_content(&dir)?;
+        if add_to_history {
+            self.history.push(self.root_dir.clone());
+        }
+        self.root_dir = dir;
+        self.items_changed = true;
+        Ok(())
     }
 }

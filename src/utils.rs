@@ -12,11 +12,7 @@ pub fn get_dir_content(path: &Path) -> Result<Vec<DirEntry>, AppError> {
     let mut dirs_vec: Vec<DirEntry> = Vec::new();
     let dirs = read_dir(path).map_err(AppError::DirReadError)?;
     for dir in dirs {
-        if let Ok(dir) = dir {
-            dirs_vec.push(dir);
-        } else {
-            todo!("add logic for dirs that couldn't be read");
-        }
+        dirs_vec.push(dir.map_err(AppError::DirReadError)?);
     }
     Ok(dirs_vec)
 }

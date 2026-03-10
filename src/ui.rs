@@ -31,3 +31,13 @@ impl Default for UI {
         }
     }
 }
+
+impl UI {
+    pub fn display_error(&mut self, str: &str) {
+        self.error_message = str.to_string()
+    }
+
+    pub(crate) fn clear_error_msg(&mut self) {
+        self.error_message = String::new()
+    }
+}

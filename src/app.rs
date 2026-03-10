@@ -9,7 +9,6 @@ use crate::{
     interaction::{Input, input},
     logger::Logger,
     ui::{self, UI},
-    utils,
 };
 
 #[derive(Debug, Default)]
@@ -35,14 +34,19 @@ impl App {
         }
     }
 
+    pub fn traverse(&mut self, dir: PathBuf, add_to_history: bool) {
+        if let Err(e) = self.navigator.change_root(dir, add_to_history) {
+            self.ui
+                .display_error("Could not display directory's contents");
+            self.logger.log_error(e.to_string().as_str());
+        } else {
+            self.ui.dir_table_state.select_first();
+            self.ui.clear_error_msg();
+        }
+    }
+
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> Result<(), AppError> {
         while !self.exit {
-            // Find new items
-            if self.navigator.items_changed {
-                self.navigator.dir_items = utils::get_dir_content(&self.navigator.root_dir)?;
-                self.navigator.items_changed = false;
-            }
-
             // Draw the terminal
             terminal
                 .draw(|frame| ui::render(self, frame))
@@ -54,15 +58,5 @@ impl App {
             }
         }
         Ok(())
-    }
-
-    pub fn change_root(&mut self, dir: PathBuf, add_to_history: bool) {
-        if add_to_history {
-            self.navigator.history.push(self.navigator.root_dir.clone());
-        }
-        self.navigator.root_dir = dir;
-        self.navigator.items_changed = true;
-
-        self.ui.dir_table_state.select_first();
     }
 }
