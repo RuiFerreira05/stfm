@@ -4,10 +4,10 @@ use crossterm::event::{self, Event};
 use ratatui::DefaultTerminal;
 
 use crate::{
-    dir::Navigator,
     errors::AppError,
     interaction::{Input, input},
     logger::Logger,
+    navigator::Navigator,
     ui::{self, UI},
 };
 
