@@ -4,7 +4,7 @@ use strum::Display;
 
 #[derive(Debug, Default)]
 pub struct Logger {
-    logs: Vec<LogMessage>,
+    pub logs: Vec<LogMessage>,
 }
 
 #[derive(Debug)]

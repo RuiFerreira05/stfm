@@ -10,7 +10,6 @@ pub struct Navigator {
     pub root_dir: PathBuf,
     pub history: Vec<PathBuf>,
     pub dir_items: Vec<DirEntry>,
-    pub items_changed: bool,
 }
 
 impl Navigator {
@@ -34,7 +33,6 @@ impl Navigator {
             self.history.push(self.root_dir.clone());
         }
         self.root_dir = dir;
-        self.items_changed = true;
         Ok(())
     }
 

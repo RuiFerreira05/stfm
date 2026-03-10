@@ -32,22 +32,20 @@ pub fn handle_interaction(key: KeyEvent, app: &mut App) {
                     }
                     // 2. Check for NONE (or handle else for default behavior)
                     // strict equality is fine for NONE, or use key.modifiers.is_empty()
-                    else {
-                        if let Some(item_index) = app.ui.dir_table_state.selected() {
-                            let item = &app.navigator.dir_items[item_index];
-                            if let Ok(item_type) = item.file_type() {
-                                match item_type {
-                                    _ if item_type.is_dir() => {
-                                        app.traverse(item.path(), true);
-                                    }
-                                    _ if item_type.is_file() => {
-                                        todo!("Handle interaction with files")
-                                    }
-                                    _ => {}
+                    else if let Some(item_index) = app.ui.dir_table_state.selected() {
+                        let item = &app.navigator.dir_items[item_index];
+                        if let Ok(item_type) = item.file_type() {
+                            match item_type {
+                                _ if item_type.is_dir() => {
+                                    app.traverse(item.path(), true);
                                 }
+                                _ if item_type.is_file() => {
+                                    todo!("Handle interaction with files")
+                                }
+                                _ => {}
                             }
-                        };
-                    }
+                        }
+                    };
                 }
             }
 

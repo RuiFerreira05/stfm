@@ -26,7 +26,9 @@ fn main() -> Result<(), AppError> {
         )
     }
 
+    #[cfg(debug_assertions)]
     println!("------------------\n{:?}\n-------------------", app.logger);
+    #[cfg(debug_assertions)]
     print!("{}", app.output);
     Ok(())
 }
