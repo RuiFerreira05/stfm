@@ -4,6 +4,6 @@
 - [ ] Handle file interaction
 - [ ] Handle explorer opening
 - [x] Add logic for dirs that couldn't be read in utils
-- [ ] add logic for reading folder sizes (everything?)
+- [ ] add logic for reading folder sizes (everything integration?)
 - [ ] Create folders
 - [ ] Create files
