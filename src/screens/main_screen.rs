@@ -70,17 +70,21 @@ fn style_dir(i: usize, dir: &DirEntry) -> Row<'_> {
 }
 
 pub fn format_size(dir: &DirEntry) -> String {
+    if let Ok(file_type) = dir.file_type() {
+        if file_type.is_dir() {
+            return String::from("----");
+        }
+    }
     if let Ok(metadata) = dir.metadata() {
         let mut size = metadata.len();
-        let mut size_fmt = String::from("----");
-        for unit in ["B", "KB", "MB", "GB", "TB"] {
-            if size < 1024 {
-                size_fmt = size.to_string() + unit;
-                break;
+        let units = ["B", "KB", "MB", "GB", "TB"];
+        for (i, unit) in units.iter().enumerate() {
+            if size < 1024 || i == units.len() - 1 {
+                return size.to_string() + unit;
             }
             size /= 1024;
         }
-        return size_fmt;
+        unreachable!()
     } else {
         String::from("----")
     }
