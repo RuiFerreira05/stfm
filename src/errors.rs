@@ -7,4 +7,5 @@ pub enum AppError {
     DirReadError(Error),
     GhostPath,
     ReadEventErr(Error),
+    NoCwd(Error),
 }

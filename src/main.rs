@@ -11,7 +11,7 @@ fn main() -> Result<(), AppError> {
     if args.len() > 1 {
         path = Path::new(&args[1]).to_path_buf();
     } else {
-        let cur_dir = current_dir().unwrap();
+        let cur_dir = current_dir().map_err(|e| AppError::NoCwd(e))?;
         path = cur_dir;
     }
 
@@ -28,7 +28,6 @@ fn main() -> Result<(), AppError> {
 
     #[cfg(debug_assertions)]
     println!("------------------\n{:?}\n-------------------", app.logger);
-    #[cfg(debug_assertions)]
     print!("{}", app.output);
     Ok(())
 }
