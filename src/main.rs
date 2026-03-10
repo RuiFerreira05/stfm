@@ -17,9 +17,13 @@ fn main() -> Result<(), AppError> {
 
     // Creating new app instance
     let mut app = App::new(path)?;
+    app.logger
+        .log_info("App startup: instance created, entering run loop");
 
     // Running update loop
     if let Err(e) = ratatui::run(|terminal| app.run(terminal)) {
+        app.logger
+            .log_error(format!("App crashed with error: {}", e).as_str());
         println!(
             "The app seems to have crashed with the following error: {}",
             e

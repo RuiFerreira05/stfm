@@ -1,18 +1,21 @@
-use ratatui::{
-    Frame,
-    widgets::{ListState, TableState},
-};
+use ratatui::{Frame, widgets::TableState};
 
 use crate::{
     app::App,
-    screens::{self, Screens, main_screen},
+    screens::{self, Screens, log_screen, main_screen},
 };
 
 pub fn render(app: &mut App, frame: &mut Frame) {
     // render based on screen
     match app.ui.current_screen {
-        screens::Screens::MainScreen => main_screen::render(app, frame),
-        screens::Screens::LogScreen => todo!(),
+        screens::Screens::MainScreen => {
+            app.logger.log_info("Rendering MainScreen");
+            main_screen::render(app, frame);
+        }
+        screens::Screens::LogScreen => {
+            app.logger.log_info("Rendering LogScreen");
+            log_screen::render(app, frame);
+        }
     }
 }
 

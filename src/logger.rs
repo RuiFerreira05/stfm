@@ -1,5 +1,4 @@
-use std::time::SystemTime;
-
+use chrono::{DateTime, Utc};
 use strum::Display;
 
 #[derive(Debug, Default)]
@@ -10,7 +9,7 @@ pub struct Logger {
 #[derive(Debug, Clone)]
 pub struct LogMessage {
     pub log_level: LogLevel,
-    pub timestamp: SystemTime,
+    pub timestamp: DateTime<Utc>,
     pub message: String,
 }
 
@@ -31,8 +30,8 @@ impl Logger {
     pub fn log(&mut self, message: &str, log_level: LogLevel) {
         self.logs.push(LogMessage {
             log_level: log_level.clone(),
-            timestamp: SystemTime::now(),
-            message: log_level.to_string() + ": " + message,
+            timestamp: Utc::now(),
+            message: message.to_string(),
         });
     }
 

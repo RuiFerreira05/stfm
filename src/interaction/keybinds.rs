@@ -20,7 +20,7 @@ impl Default for KeybindsNormal {
             back_history: parse_keybind("BACKSPACE|ESC"),
             navigate_up: parse_keybind("UP"),
             navigate_down: parse_keybind("DOWN"),
-            toggle_log: parse_keybind("l"),
+            toggle_log: parse_keybind("t"),
         }
     }
 }
@@ -28,6 +28,27 @@ impl Default for KeybindsNormal {
 impl KeybindsNormal {
     pub fn new() -> KeybindsNormal {
         KeybindsNormal::default()
+    }
+}
+
+#[derive(Debug)]
+pub struct KeybindsLog {
+    pub toggle_log: Vec<KeyCode>,
+    pub toggle_scroll: Vec<KeyCode>,
+}
+
+impl Default for KeybindsLog {
+    fn default() -> Self {
+        Self {
+            toggle_log: parse_keybind("t"),
+            toggle_scroll: parse_keybind("s"),
+        }
+    }
+}
+
+impl KeybindsLog {
+    pub fn new() -> KeybindsLog {
+        KeybindsLog::default()
     }
 }
 
