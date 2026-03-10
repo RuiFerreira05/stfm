@@ -10,7 +10,7 @@ use crate::errors::AppError;
 // returns a vector of DirEntry, or an AppError on fail. Will not error out if a dir can't be read
 pub fn get_dir_content(path: &Path) -> Result<Vec<DirEntry>, AppError> {
     let mut dirs_vec: Vec<DirEntry> = Vec::new();
-    let dirs = read_dir(path).map_err(|e| AppError::DirReadError(e))?;
+    let dirs = read_dir(path).map_err(AppError::DirReadError)?;
     for dir in dirs {
         if let Ok(dir) = dir {
             dirs_vec.push(dir);
