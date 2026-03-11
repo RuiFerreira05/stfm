@@ -1,10 +1,15 @@
 use ratatui::{
-    Frame,
     layout::Constraint,
-    widgets::{Row, Table},
+    text::Text,
+    widgets::{canvas::Line, Row, Table},
+    Frame,
 };
 
-use crate::{app::App, logger::LogMessage};
+use crate::{
+    app::App,
+    logger::{LogLevel, LogMessage},
+    styles,
+};
 
 pub fn render(app: &mut App, frame: &mut Frame) {
     let logs = &app.logger.logs;
@@ -24,9 +29,13 @@ pub fn render(app: &mut App, frame: &mut Frame) {
 }
 
 fn style_row(log: &LogMessage) -> Row<'_> {
-    let log_msg = log.message.to_string();
-    let log_level = log.log_level.to_string();
-    let log_timestamp = log.timestamp.format("%d/%m/%Y %H:%M:%S").to_string();
+    let log_level = Text::from(log.log_level.to_string()).style(match log.log_level {
+        LogLevel::Fatal => styles::mocha::RED,
+        LogLevel::Error => styles::mocha::RED,
+        _ => styles::mocha::TEXT,
+    });
+    let log_msg = Text::from(log.message.to_string());
+    let log_timestamp = Text::from(log.timestamp.format("%d/%m/%Y %H:%M:%S").to_string());
     let row = Row::new(vec![log_level, log_msg, log_timestamp]);
 
     return row;

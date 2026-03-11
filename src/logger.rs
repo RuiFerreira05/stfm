@@ -13,7 +13,7 @@ pub struct LogMessage {
     pub message: String,
 }
 
-#[derive(Debug, Display, Clone)]
+#[derive(Debug, Display, Clone, PartialEq, Eq)]
 #[strum(serialize_all = "UPPERCASE")]
 pub enum LogLevel {
     Debug,
