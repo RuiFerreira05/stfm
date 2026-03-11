@@ -24,13 +24,15 @@ fn plain_key(code: KeyCode) -> KeyEvent {
 
 impl Default for Keymap {
     fn default() -> Self {
+        // GLOBAL
         let mut global: HashMap<KeyEvent, Action> = HashMap::new();
+
         global.insert(key(KeyCode::Char('c'), KeyModifiers::CONTROL), Action::Exit);
+        global.insert(plain_key(KeyCode::Char('q')), Action::Exit);
         global.insert(plain_key(KeyCode::Char('t')), Action::ToggleLogs);
 
-        // -- MainScreen bindings --
+        // MAIN SCREEN
         let mut main_screen: HashMap<KeyEvent, Action> = HashMap::new();
-        main_screen.insert(plain_key(KeyCode::Char('q')), Action::Exit);
 
         main_screen.insert(plain_key(KeyCode::Up), Action::NavigateUp);
         main_screen.insert(plain_key(KeyCode::Down), Action::NavigateDown);
@@ -51,7 +53,7 @@ impl Default for Keymap {
         main_screen.insert(plain_key(KeyCode::Backspace), Action::BackHistory);
         main_screen.insert(plain_key(KeyCode::Esc), Action::BackHistory);
 
-        // -- LogScreen bindings --
+        // LOGSCREEN
         let mut log_screen: HashMap<KeyEvent, Action> = HashMap::new();
         log_screen.insert(plain_key(KeyCode::Char('s')), Action::ToggleScroll);
 
