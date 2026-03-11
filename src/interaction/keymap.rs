@@ -43,9 +43,10 @@ impl Default for Keymap {
             key(KeyCode::Right, KeyModifiers::CONTROL),
             Action::CtrlSelect,
         );
+
         main_screen.insert(
-            key(KeyCode::Enter, KeyModifiers::CONTROL),
-            Action::CtrlSelect,
+            key(KeyCode::Char('o'), KeyModifiers::CONTROL),
+            Action::OpenExplorer,
         );
 
         main_screen.insert(plain_key(KeyCode::Left), Action::BackDir);

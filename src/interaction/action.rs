@@ -9,4 +9,6 @@ pub enum Action {
     BackHistory,
     ToggleLogs,
     ToggleScroll,
+    #[cfg(target_os = "windows")]
+    OpenExplorer,
 }

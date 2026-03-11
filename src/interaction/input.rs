@@ -11,17 +11,14 @@ impl App {
                 self.logger.log_info("Exit triggered");
                 self.exit = true;
             }
-
             Action::NavigateUp => {
                 self.logger.log_info("Navigate up");
                 self.ui.dir_table_state.select_previous();
             }
-
             Action::NavigateDown => {
                 self.logger.log_info("Navigate down");
                 self.ui.dir_table_state.select_next();
             }
-
             Action::Select => {
                 if let Some(item_index) = self.ui.dir_table_state.selected() {
                     let item = &self.navigator.dir_items[item_index];
@@ -41,7 +38,6 @@ impl App {
                     }
                 }
             }
-
             Action::CtrlSelect => {
                 self.logger
                     .log_info("Ctrl+Select: outputting current directory");
@@ -51,7 +47,6 @@ impl App {
                 self.output = output;
                 self.exit = true;
             }
-
             Action::BackDir => {
                 if let Some(dir) = self.navigator.root_dir.parent() {
                     self.logger.log_info(
@@ -60,7 +55,6 @@ impl App {
                     self.traverse(dir.to_path_buf(), true);
                 }
             }
-
             Action::BackHistory => {
                 if let Some(previous_entry) = self.navigator.history.pop() {
                     self.logger.log_info(
@@ -73,14 +67,19 @@ impl App {
                     self.exit = true;
                 }
             }
-
             Action::ToggleLogs => {
                 self.logger.log_info("Toggle log screen");
                 self.toggle_logs();
             }
-
             Action::ToggleScroll => {
                 self.logger.log_error("Toggle scroll - TODO");
+            }
+            Action::OpenExplorer => {
+                if let Some(item_index) = self.ui.dir_table_state.selected() {
+                    let item = &self.navigator.dir_items[item_index];
+                    let path = item.path().to_str().unwrap_or("").to_string();
+                    self.open_file(path.as_str());
+                }
             }
         }
     }

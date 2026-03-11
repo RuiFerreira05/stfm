@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] Add tab for the logger
+- [x] Add tab for the logger
 - [ ] Handle file interaction
 - [ ] Handle explorer opening
 - [x] Add logic for dirs that couldn't be read in utils
