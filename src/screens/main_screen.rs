@@ -3,12 +3,14 @@ use std::fs::DirEntry;
 use ratatui::{
     Frame,
     layout::Constraint,
-    style::{Style, Stylize},
-    text::Line,
-    widgets::{Block, Row, Table},
+    style::Style,
+    widgets::{Row, Table},
 };
 
-use crate::{app::App, styles};
+use crate::{
+    app::App,
+    styles::{self, modules::main_block},
+};
 
 pub fn render(app: &mut App, frame: &mut Frame) {
     let rows: Vec<Row> = app
@@ -32,14 +34,8 @@ pub fn render(app: &mut App, frame: &mut Frame) {
                 .replace("\\", "/")
                 .as_str(),
     ) + "/ ";
-    let title = Line::from(title_str).italic().fg(styles::mocha::SUBTEXT_0);
     let main_table = Table::new(rows, widths)
-        .block(
-            Block::bordered()
-                .border_style(Style::new().fg(styles::mocha::LAVENDER))
-                .title(title)
-                .title_bottom(Line::from(app.ui.error_message.as_str()).style(styles::mocha::RED)),
-        )
+        .block(main_block(title_str, app.ui.error_message.to_owned()))
         .style(Style::new().bg(styles::mocha::BASE).fg(styles::mocha::TEXT))
         .highlight_symbol(" -> ")
         .highlight_spacing(ratatui::widgets::HighlightSpacing::Always)
