@@ -17,7 +17,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
     let rows: Vec<Row> = logs.into_iter().map(|log| style_row(log)).collect();
 
     let widths = [
-        Constraint::Length(6),
+        Constraint::Length(7),
         Constraint::Fill(1),
         Constraint::Length(22),
     ];
@@ -29,12 +29,14 @@ pub fn render(app: &mut App, frame: &mut Frame) {
 }
 
 fn style_row(log: &LogMessage) -> Row<'_> {
-    let log_level = Text::from(log.log_level.to_string() + " │").style(match log.log_level {
-        LogLevel::Fatal => styles::mocha::RED,
-        LogLevel::Error => styles::mocha::RED,
-        _ => styles::mocha::TEXT,
-    });
-    let log_msg = Text::from(log.message.to_string());
+    let log_level = Text::from(" ".to_string() + log.log_level.to_string().as_str()).style(
+        match log.log_level {
+            LogLevel::Fatal => styles::mocha::RED,
+            LogLevel::Error => styles::mocha::RED,
+            _ => styles::mocha::TEXT,
+        },
+    );
+    let log_msg = Text::from("│ ".to_string() + log.message.to_string().as_str());
     let log_timestamp = Text::from(
         "│ ".to_string()
             + log
